@@ -50,81 +50,90 @@
                             </template>
                         </el-input>
                     </el-form-item>
+
+                    <el-form-item prop="hasSpec">
+                        <el-checkbox v-model="dialogData.rowData!.hasSpec" :label="$t('toolbox.clam.cron')" />
+                    </el-form-item>
+                    <el-form-item prop="spec" v-if="dialogData.rowData!.hasSpec && isProductPro">
+                        <div class="grid sm:grid-cols-4 gap-4 grid-cols-1">
+                            <el-select v-model="dialogData.rowData!.specObj.specType" @change="changeSpecType()">
+                                <el-option
+                                    v-for="item in specOptions"
+                                    :key="item.label"
+                                    :value="item.value"
+                                    :label="item.label"
+                                />
+                            </el-select>
+                            <el-select
+                                v-if="dialogData.rowData!.specObj.specType === 'perWeek'"
+                                v-model="dialogData.rowData!.specObj.week"
+                            >
+                                <el-option
+                                    v-for="item in weekOptions"
+                                    :key="item.label"
+                                    :value="item.value"
+                                    :label="item.label"
+                                />
+                            </el-select>
+                            <el-input
+                                v-if="hasDay(dialogData.rowData!.specObj)"
+                                v-model.number="dialogData.rowData!.specObj.day"
+                            >
+                                <template #append>
+                                    <div class="sm:min-w-8 min-w-14 text-center">
+                                        <el-tooltip :content="$t('commons.units.day')" placement="top">
+                                            {{ $t('commons.units.dayUnit') }}
+                                        </el-tooltip>
+                                    </div>
+                                </template>
+                            </el-input>
+                            <el-input
+                                v-if="hasHour(dialogData.rowData!.specObj)"
+                                v-model.number="dialogData.rowData!.specObj.hour"
+                            >
+                                <template #append>
+                                    <div class="sm:min-w-8 min-w-14 text-center">
+                                        <el-tooltip :content="$t('commons.units.hour')" placement="top">
+                                            {{ $t('commons.units.hourUnit') }}
+                                        </el-tooltip>
+                                    </div>
+                                </template>
+                            </el-input>
+                            <el-input
+                                v-if="dialogData.rowData!.specObj.specType !== 'perNSecond'"
+                                v-model.number="dialogData.rowData!.specObj.minute"
+                            >
+                                <template #append>
+                                    <div class="sm:min-w-8 min-w-14 text-center">
+                                        <el-tooltip :content="$t('commons.units.minute')" placement="top">
+                                            {{ $t('commons.units.minuteUnit') }}
+                                        </el-tooltip>
+                                    </div>
+                                </template>
+                            </el-input>
+                            <el-input
+                                v-if="dialogData.rowData!.specObj.specType === 'perNSecond'"
+                                v-model.number="dialogData.rowData!.specObj.second"
+                            >
+                                <template #append>
+                                    <div class="sm:min-w-8 min-w-14 text-center">
+                                        <el-tooltip :content="$t('commons.units.second')" placement="top">
+                                            {{ $t('commons.units.secondUnit') }}
+                                        </el-tooltip>
+                                    </div>
+                                </template>
+                            </el-input>
+                        </div>
+                    </el-form-item>
+                    <div v-if="globalStore.isIntl">
+                        <el-form-item v-if="(dialogData.rowData!.hasSpec) && !isProductPro">
+                            <span>{{ $t('toolbox.clam.alertHelper') }}</span>
+                            <el-button link type="primary" @click="toUpload">
+                                {{ $t('license.levelUpPro') }}
+                            </el-button>
+                        </el-form-item>
+                    </div>
                     <div v-if="!globalStore.isIntl">
-                        <el-form-item prop="hasSpec">
-                            <el-checkbox v-model="dialogData.rowData!.hasSpec" :label="$t('toolbox.clam.cron')" />
-                        </el-form-item>
-                        <el-form-item prop="spec" v-if="dialogData.rowData!.hasSpec && isProductPro">
-                            <div class="grid sm:grid-cols-4 gap-4 grid-cols-1">
-                                <el-select v-model="dialogData.rowData!.specObj.specType" @change="changeSpecType()">
-                                    <el-option
-                                        v-for="item in specOptions"
-                                        :key="item.label"
-                                        :value="item.value"
-                                        :label="item.label"
-                                    />
-                                </el-select>
-                                <el-select
-                                    v-if="dialogData.rowData!.specObj.specType === 'perWeek'"
-                                    v-model="dialogData.rowData!.specObj.week"
-                                >
-                                    <el-option
-                                        v-for="item in weekOptions"
-                                        :key="item.label"
-                                        :value="item.value"
-                                        :label="item.label"
-                                    />
-                                </el-select>
-                                <el-input
-                                    v-if="hasDay(dialogData.rowData!.specObj)"
-                                    v-model.number="dialogData.rowData!.specObj.day"
-                                >
-                                    <template #append>
-                                        <div class="sm:min-w-8 min-w-14 text-center">
-                                            <el-tooltip :content="$t('commons.units.day')" placement="top">
-                                                {{ $t('commons.units.dayUnit') }}
-                                            </el-tooltip>
-                                        </div>
-                                    </template>
-                                </el-input>
-                                <el-input
-                                    v-if="hasHour(dialogData.rowData!.specObj)"
-                                    v-model.number="dialogData.rowData!.specObj.hour"
-                                >
-                                    <template #append>
-                                        <div class="sm:min-w-8 min-w-14 text-center">
-                                            <el-tooltip :content="$t('commons.units.hour')" placement="top">
-                                                {{ $t('commons.units.hourUnit') }}
-                                            </el-tooltip>
-                                        </div>
-                                    </template>
-                                </el-input>
-                                <el-input
-                                    v-if="dialogData.rowData!.specObj.specType !== 'perNSecond'"
-                                    v-model.number="dialogData.rowData!.specObj.minute"
-                                >
-                                    <template #append>
-                                        <div class="sm:min-w-8 min-w-14 text-center">
-                                            <el-tooltip :content="$t('commons.units.minute')" placement="top">
-                                                {{ $t('commons.units.minuteUnit') }}
-                                            </el-tooltip>
-                                        </div>
-                                    </template>
-                                </el-input>
-                                <el-input
-                                    v-if="dialogData.rowData!.specObj.specType === 'perNSecond'"
-                                    v-model.number="dialogData.rowData!.specObj.second"
-                                >
-                                    <template #append>
-                                        <div class="sm:min-w-8 min-w-14 text-center">
-                                            <el-tooltip :content="$t('commons.units.second')" placement="top">
-                                                {{ $t('commons.units.secondUnit') }}
-                                            </el-tooltip>
-                                        </div>
-                                    </template>
-                                </el-input>
-                            </div>
-                        </el-form-item>
                         <el-form-item prop="hasAlert">
                             <el-checkbox v-model="dialogData.rowData!.hasAlert" :label="$t('alert.isAlert')" />
                             <span class="input-help">{{ $t('alert.clamHelper') }}</span>

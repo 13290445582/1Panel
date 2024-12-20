@@ -134,11 +134,9 @@ function getCheckedLabels(json: Node): string[] {
 const search = async () => {
     await checkIsSystemIntl();
     let checkedLabels: any[] = [];
-    if (!globalStore.isIntl) {
-        const res = await getSettingInfo();
-        const json: Node = JSON.parse(res.data.xpackHideMenu);
-        checkedLabels = getCheckedLabels(json);
-    }
+    const res = await getSettingInfo();
+    const json: Node = JSON.parse(res.data.xpackHideMenu);
+    checkedLabels = getCheckedLabels(json);
 
     let rstMenuList: RouteRecordRaw[] = [];
     menuStore.menuList.forEach((item) => {
@@ -146,6 +144,9 @@ const search = async () => {
         let menuChildren: RouteRecordRaw[] = [];
         if (menuItem.path === '/xpack') {
             if (checkedLabels.length) {
+                menuItem.children = menuItem.children.filter((child: any) => {
+                    return !(globalStore.isIntl && child.path.includes('/xpack/alert'));
+                });
                 menuItem.children.forEach((child: any) => {
                     for (const str of checkedLabels) {
                         if (child.name === str) {

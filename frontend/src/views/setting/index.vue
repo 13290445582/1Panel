@@ -9,8 +9,6 @@
 
 <script lang="ts" setup>
 import i18n from '@/lang';
-import { GlobalStore } from '@/store';
-const globalStore = GlobalStore();
 
 const buttons = [
     {
@@ -38,8 +36,4 @@ const buttons = [
         path: '/settings/about',
     },
 ];
-
-if (globalStore.isIntl) {
-    buttons.splice(4, 1);
-}
 </script>
